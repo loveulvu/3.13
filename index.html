@@ -1,119 +1,90 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>极简个人首页</title>
-  <style>
-    #cursor.active {
-    transform: scale(1.5);
-    background: rgb(139, 165, 124);
-    opacity: 0.5;
-}
-    #cursor {
-        mix-blend-mode: difference;
-  width: 20px;
-  height: 20px;
-  background: #e3eaf5; /* 颜色*/
-  border-radius: 50%;
-  position: fixed; /* 固定在屏幕上 */
-  pointer-events: none; /* 关键：鼠标点击会穿透它，点到下面的按钮 */
-  z-index: 9999;
-  box-shadow: 0 0 20px #38bdf8, 0 0 40px #38bdf8; /* 发光效果 */
-  transition: transform 0.1s ease-out; /* 让移动带一点点延迟，显得丝滑 */
-}
-/* 引用 Google 免费高级字体 */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>极简个人首页</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* 纯黑流光背景 */
-    background: linear-gradient(-45deg, #000000, #0a0a0a, #111111, #000000);
-    background-size: 400% 400%;
-    animation: gradientMove 10s ease infinite;
-    font-family: 'Inter', sans-serif;
-    color: #ffffff;
-    overflow: hidden;
-    cursor: none;
-}
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #000000, #1a1a1a, #0a0a0a, #000000);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+            cursor: none; /* 电脑端隐藏原生鼠标 */
+        }
 
-/* 核心：去掉卡片背景，只留文字和空灵感 */
-.card {
-    text-align: center;
-    z-index: 10;
-}
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-.card-title {
-    font-size: 80px; /* 超大字体是设计感的核心 */
-    font-weight: 700;
-    margin-bottom: 20px;
-    letter-spacing: -1px;
-}
+        #cursor {
+            mix-blend-mode: difference;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 20px #38bdf8;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            left: -100px; /* 初始位置移出屏幕 */
+        }
 
-.primary-btn {
-    background: white;
-    color: black;
-    border: none;
-    padding: 15px 40px;
-    border-radius: 50px;
-    font-weight: bold;
-    cursor: none;
-    transition: 0.3s;
-}
+        #cursor.active { transform: scale(4); }
 
-/* 光圈样式 */
-#cursor {
-    mix-blend-mode: difference;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        .card { text-align: center; z-index: 10; }
+        .card-title { font-size: 80px; font-weight: 700; margin-bottom: 40px; letter-spacing: -2px; }
 
-#cursor.active {
-    transform: scale(4); /* 碰到按钮变超大 */
-}
-  </style>    
+        .primary-btn {
+            background: white;
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        /* 2. 手机端专项优化 */
+        @media (max-width: 768px) {
+            #cursor { display: none; }
+            body { cursor: auto; }
+            .card-title { font-size: 60px; }
+            .primary-btn { padding: 18px 50px; font-size: 18px; }
+        }
+    </style>
 </head>
-
 <body>
-    <div id="cursor">
+    <div id="cursor"></div>
+    <div class="card">
+        <h1 class="card-title">Hello</h1>
+        <button class="primary-btn">联系我</button>
+    </div>
 
-    </div>  
-  <div class="card">
-    <h1 class="card-title">Hello</h1>
-    <button class="primary-btn">联系我</button>
-  </div>
-  <script>
-    
-   // 1. 【必须先定义变量】
-const btn = document.querySelector('.primary-btn');
-const dot = document.querySelector('#cursor');
+    <script>
+        const btn = document.querySelector('.primary-btn');
+        const dot = document.querySelector('#cursor');
 
-// 2. 【移动逻辑】
-window.addEventListener('mousemove', (e) => {
-    dot.style.left = e.clientX - 10 + 'px';
-    dot.style.top = e.clientY - 10 + 'px';
-});
+        // 只在有鼠标的设备上监听移动
+        window.addEventListener('mousemove', (e) => {
+            dot.style.left = e.clientX - 10 + 'px';
+            dot.style.top = e.clientY - 10 + 'px';
+        });
 
-// 3. 【交互逻辑：使用 Class 切换】专业做法
-btn.addEventListener('mouseenter', () => {
-    dot.classList.add('active');
-});
-
-btn.addEventListener('mouseleave', () => {
-    dot.classList.remove('active');
-});
-</script>
+        btn.addEventListener('mouseenter', () => dot.classList.add('active'));
+        btn.addEventListener('mouseleave', () => dot.classList.remove('active'));
+    </script>
 </body>
 </html>
-
-
-
