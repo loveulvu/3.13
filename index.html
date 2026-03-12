@@ -8,22 +8,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
         body {
-            overflow-x: hidden; /* 禁止横向滚动（防止左右晃动） */
-    overflow-y: auto;   /* 允许纵向滚动（让用户能往下看） */
-    height: auto;       /* 不要写死 100vh，让高度随内容伸缩 */
-    min-height: 100vh;  /* 保证至少占满一屏 */
             margin: 0;
-            height: 100vh;
+            padding: 0;
+            /* 修正：允许垂直滚动，禁止水平晃动 */
+            overflow-x: hidden;
+            overflow-y: auto; 
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* 让内容按顺序往下排 */
+            justify-content: flex-start; /* 从顶部开始排，不再死锁在中心 */
             align-items: center;
             background: linear-gradient(-45deg, #000000, #1a1a1a, #0a0a0a, #000000);
             background-size: 400% 400%;
             animation: gradientMove 10s ease infinite;
             font-family: 'Inter', sans-serif;
             color: #ffffff;
-            overflow: hidden;
-            cursor: none; /* 电脑端隐藏原生鼠标 */
+            cursor: none; 
         }
 
         @keyframes gradientMove {
@@ -43,12 +43,21 @@
             z-index: 9999;
             box-shadow: 0 0 20px #38bdf8;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            left: -100px; /* 初始位置移出屏幕 */
+            left: -100px;
         }
 
         #cursor.active { transform: scale(3); }
 
-        .card { text-align: center; z-index: 10; }
+        /* 第一屏：Hero Section */
+        .hero {
+            height: 100vh; /* 第一屏强制占满全屏 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
         .card-title { font-size: 80px; font-weight: 700; margin-bottom: 40px; letter-spacing: -2px; }
 
         .primary-btn {
@@ -59,9 +68,19 @@
             border-radius: 50px;
             font-weight: bold;
             transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        /* 2. 手机端专项优化 */
+        /* 后面内容块的样式 */
+        .content-section {
+            width: 100%;
+            max-width: 800px;
+            padding: 100px 20px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
         @media (max-width: 768px) {
             #cursor { display: none; }
             body { cursor: auto; }
@@ -72,23 +91,24 @@
 </head>
 <body>
     <div id="cursor"></div>
-    <div class="card">
+
+    <section class="hero">
         <h1 class="card-title">Hello</h1>
-        <button class="primary-btn">联系我</button>
-        
-    </div>
-    <div class="content-section" style="padding: 50px 20px; text-align: center;">
+        <a href="#" class="primary-btn">联系我</a>
+    </section>
+
+    <div class="content-section">
         <h2>关于我</h2>
         <p>这是一个正在修仙学习前端的开发者。</p>
-        <div style="height: 500px; background: rgba(255,255,255,0.1); margin-top: 20px; border-radius: 20px;">
+        <div style="height: 500px; background: rgba(255,255,255,0.05); margin-top: 40px; border-radius: 20px; border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
             作品占位符
         </div>
     </div>
+
     <script>
         const btn = document.querySelector('.primary-btn');
         const dot = document.querySelector('#cursor');
 
-        // 只在有鼠标的设备上监听移动
         window.addEventListener('mousemove', (e) => {
             dot.style.left = e.clientX - 10 + 'px';
             dot.style.top = e.clientY - 10 + 'px';
