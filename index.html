@@ -8,6 +8,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
         body {
+            overflow-x: hidden; /* 禁止横向滚动（防止左右晃动） */
+    overflow-y: auto;   /* 允许纵向滚动（让用户能往下看） */
+    height: auto;       /* 不要写死 100vh，让高度随内容伸缩 */
+    min-height: 100vh;  /* 保证至少占满一屏 */
             margin: 0;
             height: 100vh;
             display: flex;
@@ -42,7 +46,7 @@
             left: -100px; /* 初始位置移出屏幕 */
         }
 
-        #cursor.active { transform: scale(4); }
+        #cursor.active { transform: scale(3); }
 
         .card { text-align: center; z-index: 10; }
         .card-title { font-size: 80px; font-weight: 700; margin-bottom: 40px; letter-spacing: -2px; }
@@ -71,8 +75,15 @@
     <div class="card">
         <h1 class="card-title">Hello</h1>
         <button class="primary-btn">联系我</button>
+        
     </div>
-
+    <div class="content-section" style="padding: 50px 20px; text-align: center;">
+        <h2>关于我</h2>
+        <p>这是一个正在修仙学习前端的开发者。</p>
+        <div style="height: 500px; background: rgba(255,255,255,0.1); margin-top: 20px; border-radius: 20px;">
+            作品占位符
+        </div>
+    </div>
     <script>
         const btn = document.querySelector('.primary-btn');
         const dot = document.querySelector('#cursor');
