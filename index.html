@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作品集展示</title>
     <style>
-        /* 1. 还原你要求的动态渐变背景与基础样式 */
+        /* 1. 基础样式与动态渐变背景 */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         
         body {
@@ -17,46 +17,58 @@
             font-family: 'Inter', sans-serif;
             color: #ffffff;
         }
+
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-<<<<<<< HEAD
-=======
-        /* 已移除自定义光标，使用系统默认光标 */
-
-        /* 2. 还原 Hero 区 */
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
+        /* 2. Hero 区布局 */
         .hero { 
             height: 100vh; width: 100%;
             display: flex; flex-direction: column; 
             justify-content: center; align-items: center; 
             position: relative; overflow: hidden; 
         }
-        #particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        #particle-canvas { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 1; 
+            pointer-events: none; /* 确保粒子不挡住交互 */
+        }
+
         .card-title { font-size: 80px; font-weight: 700; z-index: 10; pointer-events: none; }
+
         .primary-btn {
             background: white; color: black; border: none; padding: 15px 40px;
             border-radius: 50px; font-weight: bold; transition: 0.3s;
             text-decoration: none; z-index: 10;
         }
 
-<<<<<<< HEAD
-=======
-        /* 3. 还原你满意的卡片网格布局 */
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
+        /* 3. 作品展示区网格布局 */
         .content-section { 
             width: 100%; max-width: 900px; 
             margin: 0 auto; padding: 100px 20px; 
             box-sizing: border-box; z-index: 10; position: relative;
         }
+
+        .skills-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 40px; }
+
+        .skill-tag {
+            padding: 6px 16px; border-radius: 20px;
+            border: 1px solid var(--clr); color: var(--clr);
+            font-size: 14px; background: rgba(255, 255, 255, 0.05);
+        }
+
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px; width: 100%; margin-top: 40px;
         }
+
         .project-card {
             height: 320px;
             background: rgba(255, 255, 255, 0.05);
@@ -67,22 +79,18 @@
             opacity: 0; transform: translateY(50px);
             cursor: pointer;
         }
+
         .project-card.show { opacity: 1; transform: translateY(0); }
+
         .project-card:hover {
             transform: translateY(-10px);
             border-color: #38bdf8;
             background: rgba(255, 255, 255, 0.08);
         }
-
-        .skills-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 40px; }
-        .skill-tag {
-            padding: 6px 16px; border-radius: 20px;
-            border: 1px solid var(--clr); color: var(--clr);
-            font-size: 14px; background: rgba(255, 255, 255, 0.05);
-        }
     </style>
 </head>
 <body>
+
     <section class="hero">
         <canvas id="particle-canvas"></canvas>
         <h1 class="card-title">Hello</h1>
@@ -102,6 +110,7 @@
     </div>
 
     <script>
+        // 模块 1: 滚动观察器
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('show');
@@ -112,96 +121,54 @@
             observer.observe(el);
         });
 
-<<<<<<< HEAD
-=======
-        // --- 模块 2: 2D 版本的 Antigravity 粒子（重写：更稳定的“绕球”观感） ---
-        // 目标：把粒子坐标改成“以光标为中心的局部坐标系”，避免鼠标一动就全场重排导致乱。
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
+        // 模块 2: 2D 粒子引擎（重构性能版）
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
 
-<<<<<<< HEAD
-=======
-        // 真实鼠标（用于判断是否在动）
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
+        let particles = [];
+        let renderQueue = []; 
         let mouse = { x: -9999, y: -9999 };
         let lastMouseMoveTime = 0;
         let lastRealMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-<<<<<<< HEAD
-=======
-        // 虚拟鼠标（用于平滑跟随 + idle 自动移动）
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
         let virtualMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
         const CONFIG = {
-            count: 320,          // 粒子更多，球云更饱满
-<<<<<<< HEAD
-            magnetRadius: 200,   // 只有进入这个半径才“被力场影响”（球整体半径）
-            ringRadius: 140,      // 绕光标旋转的目标半径（球壳半径）
-            waveSpeed: 0.55,
-            waveAmplitude: 14,
-            particleSize: 36,     // 粒子大小
-=======
-            magnetRadius: 320,   // 只有进入这个半径才“被力场影响”（球整体半径）
-            ringRadius: 230,     // 绕光标旋转的目标半径（球壳半径）
+            count: 320,
+            magnetRadius: 320,
+            ringRadius: 230,
             waveSpeed: 0.55,
             waveAmplitude: 14,
             particleSize: 26,
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
             lerpSpeed: 0.07,
             pulseSpeed: 3,
             fieldStrength: 10,
             idleAfterMs: 2200,
             idleAmpX: 140,
             idleAmpY: 95,
-            // 呼吸开始半径：越靠近光标呼吸越明显
             breatheRadius: 260,
-            // 只渲染到这个半径（稍大一点，边缘渐隐）
             renderRadius: 560,
-            // 中心安全半径：禁止粒子进入光标中心（略小于球壳半径）
-<<<<<<< HEAD
-            cursorSafeRadius: 80,
-=======
             cursorSafeRadius: 140,
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
-            // “球感”关键：用局部 z 做透视、缩放与亮度
             zRange: 70
         };
 
         function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
-            // 粒子初始化到全屏空间：只有靠近光标时才会进入“反重力/绕圈”状态
             particles = [];
             for (let i = 0; i < CONFIG.count; i++) {
-                const t = Math.random() * 100;
-                const speed = 0.01 + Math.random() / 200;
-                const cz = (Math.random() - 0.5) * CONFIG.zRange; // 前后深度
-
-                // 基础位置：散布到全屏
                 const baseX = Math.random() * canvas.width;
                 const baseY = Math.random() * canvas.height;
-
-                const randomRadiusOffset = (Math.random() - 0.5) * 2;
-
                 particles.push({
-                    t,
-                    speed,
-                    // 基础位置（不受力场时回到这里）
-                    baseX,
-                    baseY,
-                    // 当前渲染位置（插值用）
-                    cx: baseX,
-                    cy: baseY,
-                    cz,
-                    // 相位与随机项
-                    randomRadiusOffset,
+                    t: Math.random() * 100,
+                    speed: 0.01 + Math.random() / 200,
+                    baseX, baseY,
+                    cx: baseX, cy: baseY,
+                    cz: (Math.random() - 0.5) * CONFIG.zRange,
+                    randomRadiusOffset: (Math.random() - 0.5) * 2,
                     size: CONFIG.particleSize
                 });
             }
+            renderQueue = [...particles]; 
         }
 
         window.addEventListener('mousemove', e => {
@@ -213,137 +180,82 @@
         });
 
         function animate() {
-            const time = performance.now() / 1000;
             const now = performance.now();
+            const time = now / 1000;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 目标鼠标：真实鼠标静止一段时间后，围绕“最后一次真实位置”轻微游走
             let destX, destY;
-            if (mouse.x === -9999 && mouse.y === -9999) {
-                destX = canvas.width / 2;
-                destY = canvas.height / 2;
+            if (mouse.x === -9999) {
+                destX = canvas.width / 2; destY = canvas.height / 2;
             } else if (now - lastMouseMoveTime > CONFIG.idleAfterMs) {
-                const t = now / 1000;
-                destX = lastRealMouse.x + Math.sin(t * 0.55) * CONFIG.idleAmpX;
-                destY = lastRealMouse.y + Math.cos(t * 0.85) * CONFIG.idleAmpY;
+                destX = lastRealMouse.x + Math.sin(time * 0.55) * CONFIG.idleAmpX;
+                destY = lastRealMouse.y + Math.cos(time * 0.85) * CONFIG.idleAmpY;
             } else {
-                destX = mouse.x;
-                destY = mouse.y;
+                destX = mouse.x; destY = mouse.y;
             }
 
-            // 平滑跟随：移动时更“跟手”，静止时更柔和
-            const isActivelyMoving = now - lastMouseMoveTime < 120;
-            const smooth = isActivelyMoving ? 0.24 : 0.12;
+            const isMoving = now - lastMouseMoveTime < 120;
+            const smooth = isMoving ? 0.24 : 0.12;
             virtualMouse.x += (destX - virtualMouse.x) * smooth;
             virtualMouse.y += (destY - virtualMouse.y) * smooth;
 
-            // 深度排序（远到近）增强“绕球”观感
-            const sorted = particles.slice().sort((a, b) => a.cz - b.cz);
+            renderQueue.sort((a, b) => a.cz - b.cz);
 
-            sorted.forEach(p => {
-                p.t += p.speed / 2;
+            for (let i = 0; i < renderQueue.length; i++) {
+        const p = renderQueue[i];
+        p.t += p.speed / 2;
 
-                // 粒子与光标的距离（用基础位置计算，避免“乱”）
-                const dx0 = p.baseX - virtualMouse.x;
-                const dy0 = p.baseY - virtualMouse.y;
-                const dist0 = Math.sqrt(dx0 * dx0 + dy0 * dy0);
+        const dx0 = p.baseX - virtualMouse.x;
+        const dy0 = p.baseY - virtualMouse.y;
+        const dist0 = Math.sqrt(dx0 * dx0 + dy0 * dy0);
 
-                // 默认目标：回到基础位置
-                let targetPos = { x: p.baseX, y: p.baseY, z: p.cz };
+        let targetX = p.baseX, targetY = p.baseY, targetZ = p.cz;
 
-                if (dist0 < CONFIG.magnetRadius) {
-                    // 进入力场：不再形成固定圆环旋转，而是做“反重力/排斥”的球形扰动
-                    // 方向：从光标指向粒子的径向方向（避免绕圈）
-                    const angle = Math.atan2(dy0, dx0);
+        // 1. 始终计算位置（不管画不画，坐标必须更新，否则粒子会“卡死”在视野外）
+        if (dist0 < CONFIG.magnetRadius) {
+            const angle = Math.atan2(dy0, dx0);
+            const k = Math.pow(Math.max(0, 1 - dist0 / CONFIG.magnetRadius), 1.6);
+            const radialWave = Math.sin(p.t * CONFIG.waveSpeed + p.randomRadiusOffset) * (CONFIG.waveAmplitude * 0.9);
+            const targetR = Math.max(CONFIG.cursorSafeRadius, dist0) + radialWave * k;
+            const swirlK = Math.max(0, 1 - dist0 / (CONFIG.cursorSafeRadius + 140));
+            const swirl = (Math.sin(time * 2.0 + p.t) * 10 + Math.cos(p.t * 1.3) * 6) * swirlK * k;
 
-                    // 越靠近光标，排斥越强；靠近磁场边缘影响越弱
-                    const kRaw = 1 - dist0 / CONFIG.magnetRadius; // 0..1
-                    const k = Math.pow(Math.max(0, Math.min(1, kRaw)), 1.6);
+            const rx = Math.cos(angle), ry = Math.sin(angle);
+            targetX = virtualMouse.x + (rx * targetR - ry * swirl);
+            targetY = virtualMouse.y + (ry * targetR + rx * swirl);
+            targetZ = p.cz + Math.sin(p.t * 1.2) * (CONFIG.waveAmplitude * 0.22) * k;
+        }
 
-                    // 在中心留一个安全半径：粒子不会贴到光标上
-                    const minR = CONFIG.cursorSafeRadius;
-                    const radialWave = Math.sin(p.t * CONFIG.waveSpeed + p.randomRadiusOffset) * (CONFIG.waveAmplitude * 0.9);
+        // 插值计算必须在 continue 之前！
+        p.cx += (targetX - p.cx) * CONFIG.lerpSpeed;
+        p.cy += (targetY - p.cy) * CONFIG.lerpSpeed;
+        p.cz += (targetZ - p.cz) * CONFIG.lerpSpeed;
 
-                    // 目标半径：把粒子向外“推”到安全半径之外，并加一点波动
-<<<<<<< HEAD
-                    const targetR = Math.max(minR, CONFIG.ringRadius) + radialWave * k;
+        // 2. 仅控制“是否绘制”
+        if (dist0 > CONFIG.renderRadius) continue; 
 
-                    // 目标位置：径向为主 + 很弱的切向扰动（只在很近时出现）
-                    // 切向方向 = 径向旋转 90°：(-sin, cos)
-                    const swirlK = Math.max(0, Math.min(1, 1 - dist0 / (CONFIG.cursorSafeRadius + 60)));
-                    const swirl = (Math.sin(p.t * 1.3) * 8 + Math.cos(p.t * 1.7) * 4) * swirlK * k;
-=======
-                    const targetR = Math.max(minR, dist0) + radialWave * k;
+        const sx = p.cx, sy = p.cy;
+        const distToCenter = Math.hypot(sx - virtualMouse.x, sy - virtualMouse.y);
+        if (distToCenter < CONFIG.cursorSafeRadius) continue;
 
-                    // 目标位置：径向为主 + 很弱的切向扰动（只在很近时出现）
-                    // 切向方向 = 径向旋转 90°：(-sin, cos)
-                    const swirlK = Math.max(0, Math.min(1, 1 - dist0 / (CONFIG.cursorSafeRadius + 140)));
-                    const swirl = (Math.sin(time * 2.0 + p.t) * 10 + Math.cos(p.t * 1.3) * 6) * swirlK * k;
->>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
+        const zNorm = (p.cz + CONFIG.zRange / 2) / CONFIG.zRange;
+        const breatheK = Math.max(0, 1 - dist0 / CONFIG.breatheRadius);
+        const pulse = 0.9 + Math.sin(p.t * CONFIG.pulseSpeed) * (0.2 + 0.3 * breatheK);
+        
+        const influence = Math.max(0, 1 - dist0 / CONFIG.magnetRadius);
+        const fade = Math.max(0, 1 - (dist0 - CONFIG.magnetRadius) / (CONFIG.renderRadius - CONFIG.magnetRadius));
+        
+        const radius = Math.max(2.2, p.size * (0.1 + 0.09 * (0.3 + 0.7 * influence)) * pulse * (0.65 + zNorm * 0.75));
+        const alpha = Math.min(1, (0.18 + 0.52 * (0.3 + 0.7 * influence)) * fade * (0.55 + 0.6 * zNorm));
 
-                    const rx = Math.cos(angle);
-                    const ry = Math.sin(angle);
-                    const tx = -ry;
-                    const ty = rx;
-
-                    const px = rx * targetR + tx * swirl;
-                    const py = ry * targetR + ty * swirl;
-
-                    targetPos.x = virtualMouse.x + px;
-                    targetPos.y = virtualMouse.y + py;
-
-                    // z 方向呼吸起伏（前后层次还在）
-                    targetPos.z = p.cz + Math.sin(p.t * 1.2) * (CONFIG.waveAmplitude * 0.22) * k;
-                }
-
-                // 平滑插值
-                p.cx += (targetPos.x - p.cx) * CONFIG.lerpSpeed;
-                p.cy += (targetPos.y - p.cy) * CONFIG.lerpSpeed;
-                p.cz += (targetPos.z - p.cz) * CONFIG.lerpSpeed;
-
-                // 透视投影：深度越靠前越大、越亮
-                const zNorm = (p.cz + CONFIG.zRange / 2) / CONFIG.zRange; // 0..1
-                const depthScale = 0.65 + zNorm * 0.75; // 0.65..1.4
-                const projectionFactor = 0.75 + zNorm * 0.35; // 0.75..1.1
-
-                // 直接用当前坐标作为屏幕坐标（透视仅通过大小/亮度体现）
-                const sx = p.cx;
-                const sy = p.cy;
-
-                // 超出渲染半径就不画（离光标远的粒子不出现）
-                if (dist0 > CONFIG.renderRadius) return;
-
-                // 中心安全圆：不允许进入光标中心
-                const distToCenter = Math.hypot(sx - virtualMouse.x, sy - virtualMouse.y);
-                if (distToCenter < CONFIG.cursorSafeRadius) return;
-
-                // 呼吸：只有在一定距离内才开始明显呼吸（靠近光标越明显）
-                const breatheK = Math.max(0, Math.min(1, 1 - dist0 / CONFIG.breatheRadius));
-                const pulse = 0.9 + Math.sin(p.t * CONFIG.pulseSpeed) * (0.2 + 0.3 * breatheK);
-
-                // 进入力场的粒子更明显；靠近渲染边缘渐隐
-                const influence = Math.max(0, Math.min(1, 1 - dist0 / CONFIG.magnetRadius));
-                const fade = Math.max(
-                    0,
-                    Math.min(1, 1 - (dist0 - CONFIG.magnetRadius) / Math.max(1, (CONFIG.renderRadius - CONFIG.magnetRadius)))
-                );
-
-                // 磁场外也保留明显的发光感（但略微变小、变暗）
-                const presence = 0.3 + 0.7 * influence;
-                const radius = Math.max(2.2, p.size * (0.1 + 0.09 * presence) * pulse * depthScale);
-                const alpha = Math.min(1, (0.18 + 0.52 * presence) * fade * (0.55 + 0.6 * zNorm));
-
-                ctx.save();
-                ctx.globalCompositeOperation = 'lighter';
-                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.75)';
-                ctx.shadowBlur = 12;
-                ctx.beginPath();
-                ctx.arc(sx, sy, radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            });
-
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.75)';
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
             requestAnimationFrame(animate);
         }
 
