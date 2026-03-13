@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AE作品展示 02</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
+        body {
+            margin: 0; padding: 0;
+            background: linear-gradient(-45deg, #000000, #1a1a1a, #0a0a0a, #000000);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: white;
+            color: black;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+            align-self: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            margin: 40px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .project-details {
+            margin-top: 60px;
+            max-width: 800px;
+            align-self: center;
+            text-align: center;
+        }
+
+        .project-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .tech-tag {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid white;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .project-description {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">返回主页</a>
+        
+        <div class="video-container">
+            <video controls>
+                <source src="#" type="video/mp4">
+                您的浏览器不支持视频播放。
+            </video>
+        </div>
+        
+        <div class="project-details">
+            <h1 class="project-title">AE作品展示 02</h1>
+            <div class="tech-stack">
+                <span class="tech-tag">AE</span>
+                <span class="tech-tag">Visual Effects</span>
+            </div>
+            <p class="project-description">
+                这是一个专注于视觉效果的After Effects作品，展示了如何通过合成技术创造出令人惊叹的视觉体验。作品运用了多种视觉效果技术，包括粒子系统、光效、色彩分级等，打造出具有电影级质感的视觉效果。
+                项目中使用了先进的视觉效果技术，通过精心调整各项参数，实现了逼真的光影效果和动态过渡。同时，运用了多层合成和遮罩技术，使得不同元素能够无缝融合，创造出统一而和谐的视觉效果。
+                该作品展示了如何通过视觉效果增强叙事能力，为观众带来沉浸式的视觉体验。无论是动态过渡还是特效元素，都经过精心设计，确保了整体视觉效果的连贯性和冲击力。
+            </p>
+        </div>
+    </div>
+</body>
+</html>
