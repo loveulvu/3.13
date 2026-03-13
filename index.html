@@ -23,9 +23,12 @@
             100% { background-position: 0% 50%; }
         }
 
+<<<<<<< HEAD
+=======
         /* 已移除自定义光标，使用系统默认光标 */
 
         /* 2. 还原 Hero 区 */
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
         .hero { 
             height: 100vh; width: 100%;
             display: flex; flex-direction: column; 
@@ -40,7 +43,10 @@
             text-decoration: none; z-index: 10;
         }
 
+<<<<<<< HEAD
+=======
         /* 3. 还原你满意的卡片网格布局 */
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
         .content-section { 
             width: 100%; max-width: 900px; 
             margin: 0 auto; padding: 100px 20px; 
@@ -106,27 +112,44 @@
             observer.observe(el);
         });
 
+<<<<<<< HEAD
+=======
         // --- 模块 2: 2D 版本的 Antigravity 粒子（重写：更稳定的“绕球”观感） ---
         // 目标：把粒子坐标改成“以光标为中心的局部坐标系”，避免鼠标一动就全场重排导致乱。
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
 
+<<<<<<< HEAD
+=======
         // 真实鼠标（用于判断是否在动）
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
         let mouse = { x: -9999, y: -9999 };
         let lastMouseMoveTime = 0;
         let lastRealMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
+<<<<<<< HEAD
+=======
         // 虚拟鼠标（用于平滑跟随 + idle 自动移动）
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
         let virtualMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
         const CONFIG = {
             count: 320,          // 粒子更多，球云更饱满
+<<<<<<< HEAD
+            magnetRadius: 200,   // 只有进入这个半径才“被力场影响”（球整体半径）
+            ringRadius: 140,      // 绕光标旋转的目标半径（球壳半径）
+            waveSpeed: 0.55,
+            waveAmplitude: 14,
+            particleSize: 36,     // 粒子大小
+=======
             magnetRadius: 320,   // 只有进入这个半径才“被力场影响”（球整体半径）
             ringRadius: 230,     // 绕光标旋转的目标半径（球壳半径）
             waveSpeed: 0.55,
             waveAmplitude: 14,
             particleSize: 26,
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
             lerpSpeed: 0.07,
             pulseSpeed: 3,
             fieldStrength: 10,
@@ -138,7 +161,11 @@
             // 只渲染到这个半径（稍大一点，边缘渐隐）
             renderRadius: 560,
             // 中心安全半径：禁止粒子进入光标中心（略小于球壳半径）
+<<<<<<< HEAD
+            cursorSafeRadius: 80,
+=======
             cursorSafeRadius: 140,
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
             // “球感”关键：用局部 z 做透视、缩放与亮度
             zRange: 70
         };
@@ -238,12 +265,21 @@
                     const radialWave = Math.sin(p.t * CONFIG.waveSpeed + p.randomRadiusOffset) * (CONFIG.waveAmplitude * 0.9);
 
                     // 目标半径：把粒子向外“推”到安全半径之外，并加一点波动
+<<<<<<< HEAD
+                    const targetR = Math.max(minR, CONFIG.ringRadius) + radialWave * k;
+
+                    // 目标位置：径向为主 + 很弱的切向扰动（只在很近时出现）
+                    // 切向方向 = 径向旋转 90°：(-sin, cos)
+                    const swirlK = Math.max(0, Math.min(1, 1 - dist0 / (CONFIG.cursorSafeRadius + 60)));
+                    const swirl = (Math.sin(p.t * 1.3) * 8 + Math.cos(p.t * 1.7) * 4) * swirlK * k;
+=======
                     const targetR = Math.max(minR, dist0) + radialWave * k;
 
                     // 目标位置：径向为主 + 很弱的切向扰动（只在很近时出现）
                     // 切向方向 = 径向旋转 90°：(-sin, cos)
                     const swirlK = Math.max(0, Math.min(1, 1 - dist0 / (CONFIG.cursorSafeRadius + 140)));
                     const swirl = (Math.sin(time * 2.0 + p.t) * 10 + Math.cos(p.t * 1.3) * 6) * swirlK * k;
+>>>>>>> 1222c2d99090b0dac7b67cd7004499b957a1e241
 
                     const rx = Math.cos(angle);
                     const ry = Math.sin(angle);
