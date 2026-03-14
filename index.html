@@ -40,7 +40,14 @@
             pointer-events: none; /* 确保粒子不挡住交互 */
         }
 
-        .card-title { font-size: 80px; font-weight: 700; z-index: 10; pointer-events: none; }
+        .card-title { 
+    font-size: 80px; 
+    font-weight: 700; 
+    z-index: 10; 
+    pointer-events: none; 
+    opacity: 0.15; /* 增加这行：基础暗度 */
+    will-change: opacity, text-shadow; /* 增加这行：开启硬件加速防掉帧 */
+}
 
         .primary-btn {
             background: white; color: black; border: none; padding: 15px 40px;
@@ -79,6 +86,13 @@
         .project-card:hover {
             transform: translateY(-10px);
             background: rgba(255, 255, 255, 0.08);
+        }
+        /* ------ 新增：移动端适配 ------ */
+        @media (max-width: 768px) {
+            .card-title { font-size: 48px; } /* 缩小巨型标题 */
+            .content-section { padding: 60px 15px; margin-top: 20px; }
+            .project-grid { gap: 20px; }
+            .project-card { height: 240px; padding: 20px; } /* 压缩卡片高度防止霸屏 */
         }
     </style>
 </head>
@@ -180,13 +194,37 @@
             });
         });
 
-        window.addEventListener('mousemove', e => {
+       window.addEventListener('mousemove', e => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
             lastMouseMoveTime = performance.now();
             lastRealMouse.x = e.clientX;
             lastRealMouse.y = e.clientY;
         });
+
+        // ------ 新增：移动端触摸映射 ------
+        window.addEventListener('touchstart', e => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+            lastMouseMoveTime = performance.now();
+            lastRealMouse.x = mouse.x;
+            lastRealMouse.y = mouse.y;
+        }, { passive: true }); // passive 确保不阻塞原生页面滚动
+
+        window.addEventListener('touchmove', e => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+            lastMouseMoveTime = performance.now();
+            lastRealMouse.x = mouse.x;
+            lastRealMouse.y = mouse.y;
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            // 手指离开屏幕，立即恢复到闲置状态
+            mouse.x = -9999;
+            mouse.y = -9999;
+        });
+        // ------ 新增结束 ------
 
         function animate() {
             const now = performance.now();
@@ -312,6 +350,27 @@
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
+            // ------ 新增：Hello 字体距离感应 ------
+                const titleEl = document.querySelector('.card-title');
+                if (titleEl) {
+                    const rect = titleEl.getBoundingClientRect();
+                    const textCX = rect.left + rect.width / 2;
+                    const textCY = rect.top + rect.height / 2;
+                    
+                    // 计算虚拟光标与字体中心的距离
+                    const distToText = Math.hypot(textCX - virtualMouse.x, textCY - virtualMouse.y);
+                    const maxTriggerDist = 450; // 光标触发半径
+                    
+                    // 映射距离到 0-1 之间，并加一个 1.5 次方曲线模拟 AE 的平滑缓动效果
+                    let intensity = Math.max(0, 1 - distToText / maxTriggerDist);
+                    intensity = Math.pow(intensity, 1.5); 
+                    
+                    const minOpacity = 0.15; // 需与 CSS 中的 opacity 保持一致
+                    titleEl.style.opacity = minOpacity + (1 - minOpacity) * intensity;
+                    // 同步增加辉光效果
+                    titleEl.style.textShadow = `0 0 ${intensity * 40}px rgba(255, 255, 255, ${intensity * 0.6})`;
+                }
+                // ------ 新增结束 ------
             requestAnimationFrame(animate);
         }
         window.addEventListener('resize', init);
